@@ -25,12 +25,13 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest pytest-cov pytest-asyncio httpx
+          pip install pytest pytest-cov pytest-asyncio httpx pytest-mock
 
       - name: Start Flask app
         run: |
-          python app.py &
-          sleep 5  # Wait for app to start
+          source venv/bin/activate
+          flask run --host=0.0.0.0 --port=5050 &
+          sleep 5
 
       - name: Run Tests and Generate Coverage Report
         run: pytest --cov=app --cov-report=xml
@@ -49,14 +50,13 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Trivy
+      - name: Run Trivy Security Scan
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: "fs"
           scan-ref: "."
           format: "table"
           exit-code: "1"
-          ignore-unfixed: true
 
   build:
     name: Build and Push Docker Image
@@ -72,13 +72,11 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
-      - name: Build and Tag Docker Image
+      - name: Build and Push Docker Image
         run: |
-          docker build --cache-from mydockerhub/flask-app:latest -t mydockerhub/flask-app:latest .
+          docker buildx create --use
+          docker buildx build --cache-to=type=inline --cache-from=type=registry,ref=mydockerhub/flask-app:latest -t mydockerhub/flask-app:latest .
           docker tag mydockerhub/flask-app:latest mydockerhub/flask-app:${{ github.sha }}
-
-      - name: Push Docker Image to Docker Hub
-        run: |
           docker push mydockerhub/flask-app:latest
           docker push mydockerhub/flask-app:${{ github.sha }}
 
@@ -97,7 +95,7 @@ jobs:
             docker pull mydockerhub/flask-app:latest
             docker stop flask_app || true
             docker rm flask_app || true
-            docker run -d --name flask_app -p 5050:5050 mydockerhub/flask-app:latest
+            docker run -d --name flask_app --restart always -p 5050:5050 mydockerhub/flask-app:latest
 
   notify:
     name: Send Notifications on Failure
@@ -109,7 +107,7 @@ jobs:
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_MESSAGE: "\ud83d\udea8 CI/CD Pipeline Failed: Check logs!"
+          SLACK_MESSAGE: "🚨 CI/CD Pipeline Failed: Check logs!"
 
   performance_test:
     name: Run Locust Load Tests
@@ -120,4 +118,4 @@ jobs:
         run: pip install locust
 
       - name: Run Load Test
-        run: locust --headless -u 10 -r 2 -t 1m -H http://${{ secrets.TEST_SERVER_IP }}:5050
+        run: locust --headless -u 10 -r 2 -t 1m --skip-log -H http://${{ secrets.TEST_SERVER_IP }}:5050
