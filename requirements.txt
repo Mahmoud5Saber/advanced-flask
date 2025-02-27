@@ -1,0 +1,10 @@
+Flask
+Flask-Session
+cachelib
+psutil
+pytest
+pytest-benchmark
+pytest-asyncio
+httpx
+requests
+werkzeug

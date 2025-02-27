@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+*.log
+.vscode/
+.idea/
+*.sqlite3
+instance/
+flask_session/
+node_modules/
