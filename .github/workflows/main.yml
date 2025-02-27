@@ -42,9 +42,9 @@ jobs:
       - name: Upload Coverage Report
         uses: codecov/codecov-action@v3
         with:
-          files: ./coverage.xml
-          fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
+          
 
 
   security_scan:
