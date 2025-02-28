@@ -96,7 +96,7 @@ jobs:
         run: docker build -t flask-app .
 
       - name: Stop and Remove Old Container (Windows)
-        shell: pwsh
+        shell: powershell
         run: |
           docker stop flask_app -ErrorAction SilentlyContinue
           docker rm flask_app -ErrorAction SilentlyContinue
