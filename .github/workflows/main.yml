@@ -98,13 +98,14 @@ jobs:
       - name: Stop and Remove Old Container (Windows)
         shell: powershell
         run: |
-          docker stop flask_app -ErrorAction SilentlyContinue
-          docker rm flask_app -ErrorAction SilentlyContinue
+          docker stop flask_app 2>$null
+          docker rm flask_app 2>$null
 
       - name: Run Docker Container
         run: |
           docker run -d --name flask_app --restart always -p 5050:5050 `
             -e FLASK_ENV=production flask-app
+
   notify:
     name: Send Notifications on Failure
     runs-on: ubuntu-latest
