@@ -86,7 +86,7 @@ jobs:
 
   deploy:
     name: Deploy to Local Server
-    runs-on: self-hosted  # تشغيل على سيرفر محلي
+    runs-on: self-hosted  # تشغيل على السيرفر المحلي
     needs: build
     steps:
       - name: Checkout Repository
@@ -95,16 +95,16 @@ jobs:
       - name: Build Docker Image
         run: docker build -t flask-app .
 
-      - name: Stop and Remove Old Container
+      - name: Stop and Remove Old Container (Windows)
+        shell: pwsh
         run: |
-          docker stop flask_app || true
-          docker rm flask_app || true
+          docker stop flask_app -ErrorAction SilentlyContinue
+          docker rm flask_app -ErrorAction SilentlyContinue
 
       - name: Run Docker Container
         run: |
-          docker run -d --name flask_app --restart always -p 5050:5050 \
+          docker run -d --name flask_app --restart always -p 5050:5050 `
             -e FLASK_ENV=production flask-app
-
   notify:
     name: Send Notifications on Failure
     runs-on: ubuntu-latest
