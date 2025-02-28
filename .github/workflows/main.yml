@@ -21,8 +21,13 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: Debug File Structure
-        run: ls -R
+      - name: Cache Python Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Install Dependencies
         run: |
@@ -78,7 +83,7 @@ jobs:
             username: ${{ secrets.DOCKERHUB_USERNAME }}
             password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and Push Docker Image
+      - name: Build and Push Docker Image with Cache
         run: |
           docker buildx build --push --cache-to=type=inline --cache-from=type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/flask-app:latest \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/flask-app:latest \
@@ -86,14 +91,11 @@ jobs:
 
   deploy:
     name: Deploy to Local Server
-    runs-on: self-hosted  # تشغيل على السيرفر المحلي
+    runs-on: self-hosted
     needs: build
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
-      - name: Build Docker Image
-        run: docker build -t flask-app .
 
       - name: Stop and Remove Old Container (Windows)
         shell: powershell
@@ -103,14 +105,14 @@ jobs:
 
       - name: Run Docker Container
         run: |
-          docker run -d --name flask_app --restart always -p 5050:5050 `
-            -e FLASK_ENV=production flask-app
+          docker run -d --name flask_app --restart always -p 5050:5050 \
+            -e FLASK_ENV=production ${{ secrets.DOCKERHUB_USERNAME }}/flask-app:latest
 
   notify:
     name: Send Notifications on Failure
     runs-on: ubuntu-latest
     if: failure()
-    needs: [test, security_scan, build, deploy]
+    needs: [test, security_scan, build, deploy, performance_test]
     steps:
       - name: Send Slack Notification
         uses: rtCamp/action-slack-notify@v2
