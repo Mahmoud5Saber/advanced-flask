@@ -107,7 +107,7 @@ jobs:
         run: |
           docker run -d --name flask_app --restart always -p 5050:5050 \
             -e FLASK_ENV=production ${{ secrets.DOCKERHUB_USERNAME }}/flask-app:latest
-
+#
   notify:
     name: Send Notifications on Failure
     runs-on: ubuntu-latest
