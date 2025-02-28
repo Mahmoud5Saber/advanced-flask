@@ -85,22 +85,25 @@ jobs:
             -t ${{ secrets.DOCKERHUB_USERNAME }}/flask-app:${{ github.sha }} .
 
   deploy:
-    name: Deploy to Test Server
-    runs-on: ubuntu-latest
+    name: Deploy to Local Server
+    runs-on: self-hosted  # تشغيل على سيرفر محلي
     needs: build
     steps:
-      - name: Deploy using SSH
-        uses: appleboy/ssh-action@v1.0.2
-        with:
-          host: ${{ secrets.TEST_SERVER_IP }}
-          username: ${{ secrets.TEST_SERVER_USER }}
-          key: ${{ secrets.TEST_SERVER_SSH_KEY }}
-          script: |
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/flask-app:latest
-            docker stop flask_app || true
-            docker rm flask_app || true
-            docker run -d --name flask_app --restart always -p 5050:5050 \
-              -e FLASK_ENV=production ${{ secrets.DOCKERHUB_USERNAME }}/flask-app:latest
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: docker build -t flask-app .
+
+      - name: Stop and Remove Old Container
+        run: |
+          docker stop flask_app || true
+          docker rm flask_app || true
+
+      - name: Run Docker Container
+        run: |
+          docker run -d --name flask_app --restart always -p 5050:5050 \
+            -e FLASK_ENV=production flask-app
 
   notify:
     name: Send Notifications on Failure
