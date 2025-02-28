@@ -97,10 +97,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Stop and Remove Old Container (Windows)
-        shell: powershell
+      - name: Run Docker Container
         run: |
-          docker ps -q --filter "name=flask_app" | ForEach-Object { docker stop $_; docker rm $_ }
+          docker run -d --name flask_app --restart always -p 5050:5050 `
+            -e FLASK_ENV=production `
+            ${{ secrets.DOCKERHUB_USERNAME }}/flask-app:latest
+
 
 
       - name: Run Docker Container
