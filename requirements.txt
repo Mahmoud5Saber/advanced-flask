@@ -2,11 +2,5 @@ Flask
 Flask-Session
 cachelib
 psutil
-pytest
-pytest-benchmark
-pytest-asyncio
-pytest-mock
-httpx
 requests
 werkzeug
-locust
