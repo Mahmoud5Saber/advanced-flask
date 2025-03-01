@@ -9,3 +9,4 @@ pytest-mock
 httpx
 requests
 werkzeug
+locust
