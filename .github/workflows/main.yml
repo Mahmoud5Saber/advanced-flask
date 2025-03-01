@@ -137,4 +137,4 @@ jobs:
         run: ls -l
 
       - name: Run Load Test
-        run: locust --headless -u 10 -r 2 -t 1m --skip-log -H http://${{ secrets.TEST_SERVER_IP }}:5050 -f locustfile.py
+        run: locust --headless -u 10 -r 2 -t 1m --skip-log -H http://127.0.0.1:5050 -f locustfile.py
