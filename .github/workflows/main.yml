@@ -127,8 +127,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: deploy
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Install Locust
         run: pip install locust
 
+      - name: Debug - List Files
+        run: ls -l
+
       - name: Run Load Test
-        run: locust --headless -u 10 -r 2 -t 1m --skip-log -H http://${{ secrets.TEST_SERVER_IP }}:5050
+        run: locust --headless -u 10 -r 2 -t 1m --skip-log -H http://${{ secrets.TEST_SERVER_IP }}:5050 -f locustfile.py
