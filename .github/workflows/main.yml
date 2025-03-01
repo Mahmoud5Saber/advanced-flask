@@ -143,5 +143,5 @@ jobs:
 
 
       - name: Run Load Test with Debug
-        run: locust --headless -u 10 -r 2 -t 1m --skip-log -H http://127.0.0.1:5050 -f locustfile.py
+        run: locust --headless -u 10 -r 2 -t 1m --skip-log -H http://192.168.1.6:5050 -f locustfile.py
 
