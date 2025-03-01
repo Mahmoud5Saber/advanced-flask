@@ -133,8 +133,10 @@ jobs:
       - name: Install Locust
         run: pip install locust
 
-      - name: Debug - List Files
-        run: ls -l
+      - name: Start Flask Application
+        run: |
+          nohup python app.py &  
+          sleep 5  # انتظر 5 ثوانٍ حتى يبدأ السيرفر
 
       - name: Run Load Test with Debug
         run: locust --headless -u 10 -r 2 -t 1m --loglevel DEBUG -H http://127.0.0.1:5050 -f locustfile.py
