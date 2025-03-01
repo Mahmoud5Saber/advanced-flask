@@ -136,7 +136,7 @@ jobs:
       - name: Start Flask Application
         run: |
           nohup python app.py &  
-          sleep 5  # انتظر 5 ثوانٍ حتى يبدأ السيرفر
+          sleep 5 
 
       - name: Check if Flask is running
         run: curl -v http://127.0.0.1:5050/ || echo "Flask server is not running!"
