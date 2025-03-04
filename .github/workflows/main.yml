@@ -65,13 +65,13 @@ jobs:
           scan-ref: "."
           format: "table"
           exit-code: "1"
-          output: "trivy-report.txt"
+          output: "/tmp/trivy-report.txt" 
 
       - name: Upload Trivy Report
         uses: actions/upload-artifact@v4
         with:
           name: trivy-security-report
-          path: trivy-report.txt
+          path: "/tmp/trivy-report.txt" 
           
   build:
     name: Build and Push Docker Image
