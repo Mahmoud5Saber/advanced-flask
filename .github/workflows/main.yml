@@ -65,7 +65,7 @@ jobs:
           scan-ref: "."
           format: "table"
           exit-code: "1"
-          output: "trivy-image-report.txt"
+          output: "trivy-report.txt"
 
       - name: Upload Trivy Report
         uses: actions/upload-artifact@v4
