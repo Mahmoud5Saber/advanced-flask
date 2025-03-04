@@ -23,6 +23,7 @@ COPY --from=builder /venv /venv
 
 # Copy application files
 COPY . .
+COPY templates/ /app/templates/
 
 # Set permissions for non-root user
 RUN chown -R appuser:appgroup /app
