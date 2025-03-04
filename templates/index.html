@@ -7,6 +7,7 @@
     <style>
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -33,6 +34,24 @@
             font-size: 50px;
             margin-left: 10px; 
         }
+
+        /* تصميم الزر */
+        .btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            background: #097ce7;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #e73305;
+        }
     </style>
 </head>
 <body>
@@ -40,5 +59,6 @@
         <span class="text">Hello, CI/CD!</span> 
         <span class="emoji">👍😁</span>
     </h1>
+    <button class="btn" onclick="window.location.href='/performance'">Go to Performance</button>
 </body>
 </html>
