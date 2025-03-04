@@ -2,5 +2,5 @@ Flask
 Flask-Session
 cachelib
 psutil
-requests==2.22.0
+requests
 werkzeug
